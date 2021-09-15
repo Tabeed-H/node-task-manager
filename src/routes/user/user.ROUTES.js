@@ -67,6 +67,21 @@ router.patch("/users/:id", async (req, res) => {
   }
 });
 
+// user login
+router.post("/users/login", async (req, res) => {
+  try {
+    const user = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+    const token = user.generateToken();
+
+    res.send({ user: user, token: token });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 // delete user
 router.delete("/users/:id", async (req, res) => {
   try {

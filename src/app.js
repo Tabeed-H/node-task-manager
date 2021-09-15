@@ -34,15 +34,14 @@ app.listen(PORT, (err) => {
   console.log(`Server running on PORT ${PORT}`);
 });
 
-// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
 
 // const myFunction = async () => {
-//   const password = "TeamRedD!!";
-//   const hashedPass = await bcrypt.hash(password, 8);
+//   const token = jwt.sign({ _id: "123" }, "thisisshit");
+//   console.log(token);
 
-//   console.log(password, hashedPass);
-//   const isMatch = await bcrypt.compare(password, hashedPass);
-//   console.log(isMatch);
+//   const payload = jwt.verify(token, "thisishit");
+//   console.log(payload);
 // };
 
 // myFunction();
