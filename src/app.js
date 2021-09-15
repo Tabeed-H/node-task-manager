@@ -33,3 +33,16 @@ app.listen(PORT, (err) => {
 
   console.log(`Server running on PORT ${PORT}`);
 });
+
+// const bcrypt = require("bcrypt");
+
+// const myFunction = async () => {
+//   const password = "TeamRedD!!";
+//   const hashedPass = await bcrypt.hash(password, 8);
+
+//   console.log(password, hashedPass);
+//   const isMatch = await bcrypt.compare(password, hashedPass);
+//   console.log(isMatch);
+// };
+
+// myFunction();
