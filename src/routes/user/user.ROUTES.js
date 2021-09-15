@@ -51,16 +51,19 @@ router.patch("/users/:id", async (req, res) => {
   const isAllowed = update.every((update) => allowedUpdates.includes(update));
   if (!isAllowed) return res.status(400).send("Not allowed");
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const user = await User.findById(req.params.id);
+    update.forEach((update) => (user[update] = req.body[update]));
+    await user.save();
+    // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    //   new: true,
+    //   runValidators: true,
+    // });
 
     if (!user) return res.status(400).send("Not found");
 
     res.send(user);
   } catch (err) {
-    res.st(500).send(err);
+    res.status(500).send(err);
   }
 });
 
