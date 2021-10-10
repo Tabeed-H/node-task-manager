@@ -41,10 +41,22 @@ const userSchema = new mongoose.Schema({
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
-userSchema.methods.generateToken = function () {
+userSchema.methods.generateToken = async function () {
   const token = jwt.sign({ _id: this._id.toString() }, "thisisasecret");
+
+  // add token to user
+  this.tokens = this.tokens.concat({ token });
+  await this.save();
   return token;
 };
 

@@ -21,6 +21,10 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
+// app.use((req, res) => {
+//   res.send("Site is Under Mantaince!");
+// });
+
 app.use(userRoutes);
 app.use(taskRoutes);
 
@@ -33,15 +37,3 @@ app.listen(PORT, (err) => {
 
   console.log(`Server running on PORT ${PORT}`);
 });
-
-// const jwt = require("jsonwebtoken");
-
-// const myFunction = async () => {
-//   const token = jwt.sign({ _id: "123" }, "thisisshit");
-//   console.log(token);
-
-//   const payload = jwt.verify(token, "thisishit");
-//   console.log(payload);
-// };
-
-// myFunction();
