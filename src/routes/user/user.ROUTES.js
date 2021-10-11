@@ -21,39 +21,24 @@ router.get("/users/me", auth, async (req, res) => {
   res.send(req.user);
 });
 
-// getting a particular user
-router.get("/users/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const user = await User.findById(_id);
-    if (!user) {
-      return res.send(404).send("No User found");
-    }
-    res.status(200).send(user);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
 // update user
-router.patch("/users/:id", async (req, res) => {
+router.patch("/users/:id", auth, async (req, res) => {
   const update = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age"];
 
   const isAllowed = update.every((update) => allowedUpdates.includes(update));
   if (!isAllowed) return res.status(400).send("Not allowed");
   try {
-    const user = await User.findById(req.params.id);
-    update.forEach((update) => (user[update] = req.body[update]));
-    await user.save();
+    update.forEach((update) => (req.user[update] = req.body[update]));
+    await req.user.save();
     // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     //   new: true,
     //   runValidators: true,
     // });
 
-    if (!user) return res.status(400).send("Not found");
+    if (!req.user) return res.status(400).send("Not found");
 
-    res.send(user);
+    res.send(req.user);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -100,11 +85,10 @@ router.post("/users/logout/all", auth, async (req, res) => {
 });
 
 // delete user
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).send("User NOt FOund");
-    res.send(user);
+    await req.user.remove();
+    res.send(req.user);
   } catch (err) {
     res.status(500).send(err);
   }

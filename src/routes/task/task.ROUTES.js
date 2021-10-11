@@ -1,10 +1,15 @@
 const router = require("express").Router();
 const Task = require("../../models/task.MODEL");
+const auth = require("../../middleware/auth");
 
 // adding a new task
-router.post("/task", async (req, res) => {
+router.post("/task", auth, async (req, res) => {
   try {
-    const task = new Task(req.body);
+    // const task = new Task(req.body);
+    const task = new Task({
+      ...req.body,
+      owner: req.user._id,
+    });
     await task.save();
     res.status(200).send(task);
   } catch (err) {
@@ -13,9 +18,9 @@ router.post("/task", async (req, res) => {
 });
 
 // get all tasks
-router.get("/task", async (req, res) => {
+router.get("/task/me", auth, async (req, res) => {
   try {
-    const data = await Task.find({});
+    const data = await Task.find({ owner: req.user._id });
     if (!data) {
       return res.status(404).send("No Task Present");
     }
@@ -25,22 +30,8 @@ router.get("/task", async (req, res) => {
   }
 });
 
-// get task by id
-router.get("/task/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const task = await Task.findById(_id);
-    if (!task) {
-      return res.status(400).send("Not Found");
-    }
-    res.status(200).send(task);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
 // update task
-router.patch("/task/:id", async (req, res) => {
+router.patch("/task/:id", auth, async (req, res) => {
   const update = Object.keys(req.body);
   const allowedUpdate = ["description", "completed"];
   const allowed = update.every((update) => allowedUpdate.includes(update));
