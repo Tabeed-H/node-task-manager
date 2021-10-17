@@ -1,7 +1,18 @@
 const router = require("express").Router();
 const User = require("../../models/user.MODEL");
 const auth = require("../../middleware/auth");
-// require("../../db/mongoose");
+const multer = require("multer");
+const avatar = multer({
+  // dest: "avatar",
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpeg|jpg|png)$/gm))
+      return cb(new Error("Upload a JPEG, JPG, or PNG file!!"));
+    cb(undefined, true);
+  },
+});
 
 // add user
 router.post("/users", async (req, res) => {
@@ -22,7 +33,7 @@ router.get("/users/me", auth, async (req, res) => {
 });
 
 // update user
-router.patch("/users/:id", auth, async (req, res) => {
+router.patch("/users", auth, async (req, res) => {
   const update = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age"];
 
@@ -91,6 +102,28 @@ router.delete("/users/:id", auth, async (req, res) => {
     res.send(req.user);
   } catch (err) {
     res.status(500).send(err);
+  }
+});
+
+router.post(
+  "/users/me/avatar",
+  auth,
+  avatar.single("avatar"),
+  async (req, res) => {
+    req.user.avatar = req.file.buffer;
+    await req.user.save();
+    res.send();
+  },
+  (err, req, res, next) => res.status(400).send({ error: err.message })
+);
+
+router.delete("/users/me/avatar", auth, async (req, res) => {
+  try {
+    req.user.avatar = undefined;
+    await req.user.save();
+    res.status(200).send("Avatar removed");
+  } catch (err) {
+    res.status(400).send({ error: err.message });
   }
 });
 

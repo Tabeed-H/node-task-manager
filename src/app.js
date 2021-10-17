@@ -21,9 +21,22 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
-// app.use((req, res) => {
-//   res.send("Site is Under Mantaince!");
-// });
+const multer = require("multer");
+const upload = multer({
+  dest: "images",
+  limits: {
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(doc|docx)$/))
+      return cb(new Error("Not a valid Doc file"));
+    cb(undifined, tru);
+  },
+});
+
+app.post("/upload", upload.single("upload"), async (req, res) => {
+  res.send();
+});
 
 app.use(userRoutes);
 app.use(taskRoutes);

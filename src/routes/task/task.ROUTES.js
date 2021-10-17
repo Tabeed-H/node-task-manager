@@ -18,15 +18,27 @@ router.post("/task", auth, async (req, res) => {
 });
 
 // get all tasks
-router.get("/task/me", auth, async (req, res) => {
+router.get("/tasks", auth, async (req, res) => {
   try {
-    const data = await Task.find({ owner: req.user._id });
-    if (!data) {
-      return res.status(404).send("No Task Present");
+    const match = {};
+    if (req.query.completed) {
+      match.completed = Boolean(req.query.completed === "true");
     }
-    res.status(200).send(data);
+    await req.user.populate({
+      path: "task",
+      match,
+      options: {
+        limit: Number(req.query.limit),
+        skip: Number(req.query.skip),
+        sort: {
+          createdAt: 1,
+        },
+      },
+    });
+    res.send(req.user.task);
+    // res.send(req.user.tasks);
   } catch (err) {
-    res.send(500).send(err);
+    res.status(400).send({ Error: err });
   }
 });
 
