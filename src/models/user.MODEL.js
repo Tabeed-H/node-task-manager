@@ -65,7 +65,7 @@ userSchema.virtual("task", {
 });
 
 userSchema.methods.generateToken = async function () {
-  const token = jwt.sign({ _id: this._id.toString() }, "thisisasecret");
+  const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET);
 
   // add token to user
   this.tokens = this.tokens.concat({ token });
@@ -76,6 +76,7 @@ userSchema.methods.toJSON = function () {
   const userObject = this.toObject();
   delete userObject.password;
   delete userObject.tokens;
+  delete userObject.avatar;
 
   return userObject;
 };

@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json()); // to parse with JSON data
 
 // setup Port
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const userRoutes = require("./routes/user/user.ROUTES");
 const taskRoutes = require("./routes/task/task.ROUTES");
 
