@@ -30,7 +30,7 @@ router.post("/users", async (req, res) => {
 
 // showing a list of users
 router.get("/users/me", auth, async (req, res) => {
-  res.send(req.user);
+  res.status(200).send(req.user);
 });
 
 // update user
@@ -65,9 +65,10 @@ router.post("/users/login", async (req, res) => {
     );
     const token = await user.generateToken();
 
-    res.send({ user: user, token: token });
+    res.status(200).send({ user: user, token: token });
   } catch (err) {
     console.log(err);
+    res.status(404).send("not found");
   }
 });
 
@@ -97,10 +98,10 @@ router.post("/users/logout/all", auth, async (req, res) => {
 });
 
 // delete user
-router.delete("/users/:id", auth, async (req, res) => {
+router.delete("/users/delete", auth, async (req, res) => {
   try {
     await req.user.remove();
-    res.send(req.user);
+    res.status(200).send("deleted");
   } catch (err) {
     res.status(500).send(err);
   }
